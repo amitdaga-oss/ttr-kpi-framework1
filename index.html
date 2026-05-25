@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TTR KPI Framework for Multi-Role Support Engineers</title>
+<style>
+  :root {
+    --sf-blue: #0176d3;
+    --sf-blue-dark: #014486;
+    --sf-blue-light: #e8f4fd;
+    --bg: #f4f6f9;
+    --card: #ffffff;
+    --text: #16325c;
+    --muted: #54698d;
+    --border: #dddbda;
+    --good: #2e844a;
+    --bad: #ba0517;
+    --warn: #b06d00;
+    --good-bg: #e8f5ec;
+    --bad-bg: #fde7e9;
+    --warn-bg: #fef5e7;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Salesforce Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  header.hero {
+    background: linear-gradient(135deg, var(--sf-blue-dark), var(--sf-blue));
+    color: #fff;
+    padding: 48px 24px;
+    text-align: center;
+  }
+  header.hero h1 {
+    margin: 0 0 8px 0;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  header.hero p { margin: 0; opacity: 0.92; font-size: 1.05rem; }
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 24px;
+    padding: 24px;
+  }
+  nav.toc {
+    position: sticky;
+    top: 16px;
+    align-self: start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+  nav.toc h3 {
+    margin: 0 0 12px 0;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+  nav.toc ol { margin: 0; padding-left: 20px; }
+  nav.toc li { margin-bottom: 6px; }
+  nav.toc a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.92rem;
+  }
+  nav.toc a:hover { color: var(--sf-blue); text-decoration: underline; }
+  main { min-width: 0; }
+  section.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  section.card h2 {
+    margin: 0 0 16px 0;
+    color: var(--sf-blue-dark);
+    font-size: 1.5rem;
+    border-bottom: 2px solid var(--sf-blue-light);
+    padding-bottom: 10px;
+  }
+  section.card h3 {
+    color: var(--sf-blue-dark);
+    margin-top: 24px;
+    margin-bottom: 8px;
+    font-size: 1.15rem;
+  }
+  section.card h4 {
+    color: var(--text);
+    margin-top: 20px;
+    margin-bottom: 6px;
+    font-size: 1rem;
+  }
+  p { margin: 0 0 12px 0; }
+  ul, ol { margin: 0 0 12px 0; padding-left: 24px; }
+  li { margin-bottom: 6px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.95rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--sf-blue-light);
+    color: var(--sf-blue-dark);
+    font-weight: 600;
+    border-bottom: 2px solid var(--sf-blue);
+  }
+  tr:hover td { background: #fafbfc; }
+  .formula {
+    background: #f7f9fb;
+    border-left: 4px solid var(--sf-blue);
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.95rem;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  .callout {
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin: 14px 0;
+    border-left: 4px solid;
+  }
+  .callout.good { background: var(--good-bg); border-color: var(--good); }
+  .callout.bad { background: var(--bad-bg); border-color: var(--bad); }
+  .callout.warn { background: var(--warn-bg); border-color: var(--warn); }
+  .callout.info { background: var(--sf-blue-light); border-color: var(--sf-blue); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .badge.good { background: var(--good-bg); color: var(--good); }
+  .badge.bad { background: var(--bad-bg); color: var(--bad); }
+  .badge.warn { background: var(--warn-bg); color: var(--warn); }
+  .badge.neutral { background: #eef1f6; color: var(--muted); }
+  .step-marker {
+    display: inline-block;
+    background: var(--sf-blue);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .takeaway-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .takeaway {
+    background: var(--good-bg);
+    border-left: 4px solid var(--good);
+    padding: 12px 16px;
+    border-radius: 4px;
+  }
+  .takeaway strong { color: var(--good); }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .summary-box {
+    background: var(--sf-blue-light);
+    padding: 16px;
+    border-radius: 6px;
+  }
+  .summary-box h4 { margin-top: 0; color: var(--sf-blue-dark); }
+  .ai-disclaimer {
+    background: #fef5e7;
+    border: 1px solid #f4c25c;
+    color: #5a4400;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    margin: 16px auto;
+    max-width: 1340px;
+  }
+  footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.toc { position: static; max-height: none; }
+    section.card { padding: 20px; }
+  }
+  @media print {
+    nav.toc, header.hero { display: none; }
+    section.card { box-shadow: none; page-break-inside: avoid; border: 1px solid #ccc; }
+    body { background: #fff; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>TTR KPI Framework for Multi-Role Support Engineers</h1>
+  <p>A Fair &amp; Scalable Approach to Measuring Engineer Performance Across Mixed Case Types</p>
+</header>
+
+<div class="ai-disclaimer">
+  <strong>Note:</strong> This content was generated using AI. Review for accuracy and safety before using.
+</div>
+
+<div class="layout">
+
+  <nav class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#context">Business Context</a></li>
+      <li><a href="#problem">The Problem with Raw TTR</a></li>
+      <li><a href="#solution">Normalized TTR Score</a></li>
+      <li><a href="#monthly">Monthly Performance Score</a></li>
+      <li><a href="#log">Volume Weighting (Log)</a></li>
+      <li><a href="#blended">Blended Target TTR</a></li>
+      <li><a href="#ranking">Ranking the Team</a></li>
+      <li><a href="#takeaways">Key Takeaways</a></li>
+      <li><a href="#sample">Sample Tracking Sheet</a></li>
+      <li><a href="#summary">Leadership Summary</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <section class="card" id="context">
+      <span class="step-marker">SECTION 1</span>
+      <h2>The Business Context</h2>
+      <p>As we scale our support organization, engineers are increasingly expected to handle multiple case types — <strong>Support</strong>, <strong>Success Guide</strong>, and <strong>Onboarding Specialist</strong> cases — each with different complexity levels and resolution time expectations.</p>
+      <p>This creates a critical challenge: <em>how do we fairly measure and rank engineer performance when their case mix varies month to month?</em></p>
+    </section>
+
+    <section class="card" id="problem">
+      <span class="step-marker">SECTION 2 · STEP 1 OF 3</span>
+      <h2>The Problem with Raw TTR</h2>
+      <p>A simple average TTR (Time to Resolve) is misleading when engineers handle cases with different KPI targets. Comparing raw numbers across case types is like comparing apples to oranges.</p>
+
+      <h3>Defined KPI Targets by Case Type</h3>
+      <table>
+        <thead><tr><th>Case Type</th><th>TTR Target</th></tr></thead>
+        <tbody>
+          <tr><td>Support Engineer</td><td>7 Days</td></tr>
+          <tr><td>Success Guide</td><td>17 Days</td></tr>
+          <tr><td>Onboarding Specialist</td><td>28 Days</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Example — Why Raw TTR Fails</h3>
+      <ul>
+        <li><strong>Engineer A</strong> closes 10 Support cases averaging 6 days each → raw TTR = 6 days <span class="badge good">Looks great</span></li>
+        <li><strong>Engineer B</strong> closes 10 Onboarding cases averaging 25 days each → raw TTR = 25 days <span class="badge bad">Looks bad</span></li>
+      </ul>
+      <div class="callout info">
+        At face value, Engineer A looks far superior. But Engineer B is actually beating their target while Engineer A is also meeting theirs. <strong>Both are performing well — raw TTR hides this completely.</strong>
+      </div>
+    </section>
+
+    <section class="card" id="solution">
+      <span class="step-marker">SECTION 3 · STEP 2 OF 3</span>
+      <h2>The Solution — Normalized TTR Performance Score</h2>
+      <p>Instead of comparing raw TTR, we convert each case into a <strong>TTR Performance Score</strong> that measures how well the engineer performed against the target for that specific case type.</p>
+
+      <h3>Formula</h3>
+      <div class="formula">TTR Performance Score (per case) = Target TTR ÷ Actual TTR</div>
+
+      <table>
+        <thead><tr><th>Score</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>&gt; 1.0</td><td><span class="badge good">✓</span> Beat the target</td></tr>
+          <tr><td>= 1.0</td><td><span class="badge neutral">→</span> Exactly met the target</td></tr>
+          <tr><td>&lt; 1.0</td><td><span class="badge bad">✗</span> Missed the target</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Example Calculations</h3>
+      <table>
+        <thead><tr><th>Case Type</th><th>Target TTR</th><th>Actual TTR</th><th>Score</th></tr></thead>
+        <tbody>
+          <tr><td>Support</td><td>7 days</td><td>5 days</td><td>7 ÷ 5 = <strong>1.40</strong> <span class="badge good">✓</span></td></tr>
+          <tr><td>Support</td><td>7 days</td><td>9 days</td><td>7 ÷ 9 = <strong>0.78</strong> <span class="badge bad">✗</span></td></tr>
+          <tr><td>Success Guide</td><td>17 days</td><td>12 days</td><td>17 ÷ 12 = <strong>1.42</strong> <span class="badge good">✓</span></td></tr>
+          <tr><td>Onboarding</td><td>28 days</td><td>30 days</td><td>28 ÷ 30 = <strong>0.93</strong> <span class="badge bad">✗</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="monthly">
+      <span class="step-marker">SECTION 4 · STEP 3 OF 3</span>
+      <h2>Monthly Performance Score</h2>
+      <p>For an engineer who handles <strong>X</strong> Support, <strong>Y</strong> Guide, and <strong>Z</strong> Onboarding cases in a month:</p>
+      <div class="formula">Monthly Score = Sum of all TTR Performance Scores ÷ Total Cases (X + Y + Z)</div>
+
+      <h3>Expanded</h3>
+      <div class="formula">Monthly Score = [ Σ(7 ÷ Actual_TTR) for each Support case
+                  + Σ(17 ÷ Actual_TTR) for each Guide case
+                  + Σ(28 ÷ Actual_TTR) for each Onboarding case ] ÷ (X + Y + Z)</div>
+      <p>This naturally handles case mix imbalance — an engineer with 2 Support cases and 15 Onboarding cases won't be penalized or inflated just because of their case distribution.</p>
+    </section>
+
+    <section class="card" id="log">
+      <span class="step-marker">SECTION 5</span>
+      <h2>Volume Weighting — Why Logarithmic?</h2>
+
+      <h3>The Problem Without Volume Weighting</h3>
+      <p>Without accounting for volume, a low-volume engineer who closes just 2 easy cases perfectly could rank #1 over a high-volume engineer who closed 40 cases at 95% efficiency. That's unfair and misleading for leadership.</p>
+
+      <h3>Why Not Linear Weighting?</h3>
+      <p>A linear volume multiplier (Score × Total Cases) would swing too far in the other direction — an engineer with 50 cases would dominate the rankings even with mediocre performance, simply due to volume.</p>
+
+      <h3>The Logarithmic Advantage</h3>
+      <p>The logarithm grows fast initially (rewarding meaningful volume) but flattens out at higher volumes (preventing volume from dominating the score unfairly).</p>
+
+      <table>
+        <thead><tr><th>Total Cases</th><th>log(n+1)</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>1 case</td><td>0.69</td><td>Low — small sample</td></tr>
+          <tr><td>5 cases</td><td>1.79</td><td>Moderate — meaningful</td></tr>
+          <tr><td>15 cases</td><td>2.77</td><td>Good — solid sample</td></tr>
+          <tr><td>30 cases</td><td>3.43</td><td>Strong — high volume</td></tr>
+          <tr><td>50 cases</td><td>3.93</td><td>Very strong — but only ~14% more than 30 cases</td></tr>
+        </tbody>
+      </table>
+      <p>This means going from 1 to 15 cases dramatically boosts your adjusted score, but going from 30 to 50 cases gives only a marginal bump — keeping the focus on <strong>quality of performance, not just quantity</strong>.</p>
+
+      <h3>The Formula</h3>
+      <div class="formula">Adjusted Monthly Score = Monthly Performance Score × log(X + Y + Z + 1)</div>
+
+      <h3>When to Use Log vs. Skip It — Decision Guide</h3>
+      <table>
+        <thead><tr><th>Scenario</th><th>Recommendation</th></tr></thead>
+        <tbody>
+          <tr><td>All engineers handle roughly equal case volumes each month</td><td><span class="badge good">✓</span> Skip log — Monthly Performance Score alone is sufficient. Same log multiplier cancels out.</td></tr>
+          <tr><td>Case volumes vary significantly across engineers (real-world norm)</td><td><span class="badge good">✓</span> Use log — Prevents low-volume outliers from topping the chart on a few lucky cases.</td></tr>
+          <tr><td>A new team just starting out with low case counts</td><td><span class="badge warn">⚠</span> Use log cautiously — Low volumes amplify randomness. Consider a minimum case threshold (e.g., 5+ cases) before ranking.</td></tr>
+          <tr><td>You want the simplest model for quick reporting</td><td><span class="badge good">✓</span> Skip log — Monthly Performance Score is intuitive and still fair if volumes are balanced.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info">
+        <strong>Rule of thumb:</strong> If the gap between your highest-volume and lowest-volume engineer in a month is less than 2× (e.g., 8 vs. 15 cases), log makes negligible difference. If the gap is 3× or more (e.g., 3 vs. 20 cases), log materially protects ranking fairness.
+      </div>
+
+      <h3>Proof — When Log Actually Changes Rankings</h3>
+      <p>Here's a concrete example with unequal volumes to show log in action:</p>
+      <table>
+        <thead><tr><th>Engineer</th><th>Total Cases</th><th>Monthly Perf. Score</th><th>log(Cases+1)</th><th>Adjusted Score</th><th>Rank (with log)</th><th>Rank (without log)</th></tr></thead>
+        <tbody>
+          <tr><td>Eng-A</td><td>3</td><td>1.45</td><td>log(4) = 1.386</td><td>2.010</td><td>🥈 2nd</td><td>🥇 1st</td></tr>
+          <tr><td>Eng-B</td><td>25</td><td>1.28</td><td>log(26) = 3.258</td><td>4.170</td><td>🥇 1st</td><td>🥈 2nd</td></tr>
+        </tbody>
+      </table>
+      <div class="callout bad"><strong>Without log:</strong> Eng-A ranks #1 because 1.45 &gt; 1.28 — but Eng-A only closed 3 cases.</div>
+      <div class="callout good"><strong>With log:</strong> Eng-B ranks #1 because sustained performance across 25 cases is genuinely more valuable than 3 lucky resolutions.</div>
+      <p>This is exactly the scenario log is designed to protect against. Eng-A may have received 3 easy cases by chance. Eng-B consistently outperformed targets at scale — and the logarithmic adjustment correctly promotes them.</p>
+      <p>The logarithmic approach balances two competing goals: <strong>rewarding engineers who carry high volume</strong> AND <strong>ensuring that raw volume cannot mask poor performance quality</strong>.</p>
+    </section>
+
+    <section class="card" id="blended">
+      <span class="step-marker">SECTION 6</span>
+      <h2>Blended Target TTR — For Stakeholder Reporting</h2>
+      <p>If stakeholders need to see a single TTR number (not a score), we can back-calculate a personalized blended target for each engineer based on their actual case mix:</p>
+      <div class="formula">Blended Target TTR = (X × 7 + Y × 17 + Z × 28) ÷ (X + Y + Z)</div>
+      <p>Then compare the engineer's actual blended TTR against this personalized target. The gap tells the story:</p>
+      <ul>
+        <li><span class="badge good">✓</span> <strong>Negative gap</strong> (actual &lt; target) → Engineer is ahead of target</li>
+        <li><span class="badge bad">✗</span> <strong>Positive gap</strong> (actual &gt; target) → Engineer is behind target</li>
+      </ul>
+    </section>
+
+    <section class="card" id="ranking">
+      <span class="step-marker">SECTION 7</span>
+      <h2>Ranking the Team of 10</h2>
+      <p>At month end, every engineer has a single Adjusted Monthly Score. <strong>Higher = better.</strong></p>
+      <h3>Step-by-Step Ranking Process</h3>
+      <ol>
+        <li>For each engineer, calculate the TTR Performance Score for every case they closed that month.</li>
+        <li>Sum all scores and divide by total cases → <strong>Monthly Performance Score</strong>.</li>
+        <li>Multiply by log(total cases + 1) → <strong>Adjusted Monthly Score</strong>.</li>
+        <li>Rank all engineers from highest to lowest Adjusted Score.</li>
+        <li>Flag any engineer with a Monthly Performance Score below 1.0 (missing targets on average).</li>
+      </ol>
+    </section>
+
+    <section class="card" id="takeaways">
+      <span class="step-marker">SECTION 8</span>
+      <h2>Key Takeaways for Leadership</h2>
+      <p>This framework is fair, transparent, and scalable. It rewards engineers who consistently beat their case-type targets, accounts for volume without being dominated by it, and produces a single comparable score regardless of case mix.</p>
+      <div class="takeaway-grid">
+        <div class="takeaway"><strong>✓ Fair</strong><br>No engineer is penalized for receiving harder, longer case types.</div>
+        <div class="takeaway"><strong>✓ Transparent</strong><br>Every score traces back to individual case performance.</div>
+        <div class="takeaway"><strong>✓ Scalable</strong><br>Works whether the team has 10 or 100 engineers.</div>
+        <div class="takeaway"><strong>✓ Flexible</strong><br>New case types can be added by simply defining a new TTR target.</div>
+        <div class="takeaway"><strong>✓ Actionable</strong><br>Engineers with scores below 1.0 can be coached on specific case types.</div>
+      </div>
+    </section>
+
+    <section class="card" id="sample">
+      <span class="step-marker">SECTION 9</span>
+      <h2>Sample Tracking Sheet</h2>
+      <p>Sample calculations below with 5 engineers and their actual monthly case data.</p>
+
+      <h3>Engineer Monthly Case Data</h3>
+      <table>
+        <thead><tr><th>Engineer</th><th>Support (X)</th><th>Guide (Y)</th><th>Onboarding (Z)</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td>Eng-01</td><td>5</td><td>3</td><td>2</td><td>10</td></tr>
+          <tr><td>Eng-02</td><td>2</td><td>1</td><td>7</td><td>10</td></tr>
+          <tr><td>Eng-03</td><td>8</td><td>0</td><td>2</td><td>10</td></tr>
+          <tr><td>Eng-04</td><td>3</td><td>4</td><td>3</td><td>10</td></tr>
+          <tr><td>Eng-05</td><td>1</td><td>2</td><td>7</td><td>10</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Step 1 — TTR Performance Scores per Engineer</h3>
+
+      <h4>Eng-01 (5 Support, 3 Guide, 2 Onboarding)</h4>
+      <table>
+        <thead><tr><th>Case</th><th>Type</th><th>Target</th><th>Actual TTR</th><th>Score</th></tr></thead>
+        <tbody>
+          <tr><td>S-01</td><td>Support</td><td>7</td><td>5 days</td><td>1.40</td></tr>
+          <tr><td>S-02</td><td>Support</td><td>7</td><td>8 days</td><td>0.88</td></tr>
+          <tr><td>S-03</td><td>Support</td><td>7</td><td>6 days</td><td>1.17</td></tr>
+          <tr><td>S-04</td><td>Support</td><td>7</td><td>4 days</td><td>1.75</td></tr>
+          <tr><td>S-05</td><td>Support</td><td>7</td><td>7 days</td><td>1.00</td></tr>
+          <tr><td>G-01</td><td>Guide</td><td>17</td><td>14 days</td><td>1.21</td></tr>
+          <tr><td>G-02</td><td>Guide</td><td>17</td><td>20 days</td><td>0.85</td></tr>
+          <tr><td>G-03</td><td>Guide</td><td>17</td><td>15 days</td><td>1.13</td></tr>
+          <tr><td>O-01</td><td>Onboarding</td><td>28</td><td>22 days</td><td>1.27</td></tr>
+          <tr><td>O-02</td><td>Onboarding</td><td>28</td><td>31 days</td><td>0.90</td></tr>
+          <tr><td colspan="4" style="text-align:right;"><strong>Sum</strong></td><td><strong>11.56</strong></td></tr>
+        </tbody>
+      </table>
+      <div class="callout info">Monthly Performance Score = 11.56 ÷ 10 = <strong>1.156</strong> &nbsp;|&nbsp; Adjusted Score = 1.156 × log(11) = 1.156 × 2.398 = <strong>2.772</strong></div>
+
+      <h4>Eng-02 (2 Support, 1 Guide, 7 Onboarding)</h4>
+      <table>
+        <thead><tr><th>Case</th><th>Type</th><th>Target</th><th>Actual TTR</th><th>Score</th></tr></thead>
+        <tbody>
+          <tr><td>S-01</td><td>Support</td><td>7</td><td>6 days</td><td>1.17</td></tr>
+          <tr><td>S-02</td><td>Support</td><td>7</td><td>9 days</td><td>0.78</td></tr>
+          <tr><td>G-01</td><td>Guide</td><td>17</td><td>13 days</td><td>1.31</td></tr>
+          <tr><td>O-01</td><td>Onboarding</td><td>28</td><td>20 days</td><td>1.40</td></tr>
+          <tr><td>O-02</td><td>Onboarding</td><td>28</td><td>25 days</td><td>1.12</td></tr>
+          <tr><td>O-03</td><td>Onboarding</td><td>28</td><td>32 days</td><td>0.88</td></tr>
+          <tr><td>O-04</td><td>Onboarding</td><td>28</td><td>28 days</td><td>1.00</td></tr>
+          <tr><td>O-05</td><td>Onboarding</td><td>28</td><td>18 days</td><td>1.56</td></tr>
+          <tr><td>O-06</td><td>Onboarding</td><td>28</td><td>35 days</td><td>0.80</td></tr>
+          <tr><td>O-07</td><td>Onboarding</td><td>28</td><td>24 days</td><td>1.17</td></tr>
+          <tr><td colspan="4" style="text-align:right;"><strong>Sum</strong></td><td><strong>11.19</strong></td></tr>
+        </tbody>
+      </table>
+      <div class="callout info">Monthly Performance Score = 11.19 ÷ 10 = <strong>1.119</strong> &nbsp;|&nbsp; Adjusted Score = 1.119 × 2.398 = <strong>2.683</strong></div>
+
+      <h4>Eng-03 (8 Support, 0 Guide, 2 Onboarding)</h4>
+      <table>
+        <thead><tr><th>Case</th><th>Type</th><th>Target</th><th>Actual TTR</th><th>Score</th></tr></thead>
+        <tbody>
+          <tr><td>S-01</td><td>Support</td><td>7</td><td>4 days</td><td>1.75</td></tr>
+          <tr><td>S-02</td><td>Support</td><td>7</td><td>6 days</td><td>1.17</td></tr>
+          <tr><td>S-03</td><td>Support</td><td>7</td><td>5 days</td><td>1.40</td></tr>
+          <tr><td>S-04</td><td>Support</td><td>7</td><td>7 days</td><td>1.00</td></tr>
+          <tr><td>S-05</td><td>Support</td><td>7</td><td>10 days</td><td>0.70</td></tr>
+          <tr><td>S-06</td><td>Support</td><td>7</td><td>6 days</td><td>1.17</td></tr>
+          <tr><td>S-07</td><td>Support</td><td>7</td><td>8 days</td><td>0.88</td></tr>
+          <tr><td>S-08</td><td>Support</td><td>7</td><td>5 days</td><td>1.40</td></tr>
+          <tr><td>O-01</td><td>Onboarding</td><td>28</td><td>26 days</td><td>1.08</td></tr>
+          <tr><td>O-02</td><td>Onboarding</td><td>28</td><td>33 days</td><td>0.85</td></tr>
+          <tr><td colspan="4" style="text-align:right;"><strong>Sum</strong></td><td><strong>11.40</strong></td></tr>
+        </tbody>
+      </table>
+      <div class="callout info">Monthly Performance Score = 11.40 ÷ 10 = <strong>1.140</strong> &nbsp;|&nbsp; Adjusted Score = 1.140 × 2.398 = <strong>2.734</strong></div>
+
+      <h4>Eng-04 (3 Support, 4 Guide, 3 Onboarding)</h4>
+      <table>
+        <thead><tr><th>Case</th><th>Type</th><th>Target</th><th>Actual TTR</th><th>Score</th></tr></thead>
+        <tbody>
+          <tr><td>S-01</td><td>Support</td><td>7</td><td>5 days</td><td>1.40</td></tr>
+          <tr><td>S-02</td><td>Support</td><td>7</td><td>7 days</td><td>1.00</td></tr>
+          <tr><td>S-03</td><td>Support</td><td>7</td><td>6 days</td><td>1.17</td></tr>
+          <tr><td>G-01</td><td>Guide</td><td>17</td><td>16 days</td><td>1.06</td></tr>
+          <tr><td>G-02</td><td>Guide</td><td>17</td><td>11 days</td><td>1.55</td></tr>
+          <tr><td>G-03</td><td>Guide</td><td>17</td><td>19 days</td><td>0.89</td></tr>
+          <tr><td>G-04</td><td>Guide</td><td>17</td><td>14 days</td><td>1.21</td></tr>
+          <tr><td>O-01</td><td>Onboarding</td><td>28</td><td>25 days</td><td>1.12</td></tr>
+          <tr><td>O-02</td><td>Onboarding</td><td>28</td><td>29 days</td><td>0.97</td></tr>
+          <tr><td>O-03</td><td>Onboarding</td><td>28</td><td>21 days</td><td>1.33</td></tr>
+          <tr><td colspan="4" style="text-align:right;"><strong>Sum</strong></td><td><strong>11.70</strong></td></tr>
+        </tbody>
+      </table>
+      <div class="callout info">Monthly Performance Score = 11.70 ÷ 10 = <strong>1.170</strong> &nbsp;|&nbsp; Adjusted Score = 1.170 × 2.398 = <strong>2.806</strong></div>
+
+      <h4>Eng-05 (1 Support, 2 Guide, 7 Onboarding)</h4>
+      <table>
+        <thead><tr><th>Case</th><th>Type</th><th>Target</th><th>Actual TTR</th><th>Score</th></tr></thead>
+        <tbody>
+          <tr><td>S-01</td><td>Support</td><td>7</td><td>5 days</td><td>1.40</td></tr>
+          <tr><td>G-01</td><td>Guide</td><td>17</td><td>15 days</td><td>1.13</td></tr>
+          <tr><td>G-02</td><td>Guide</td><td>17</td><td>18 days</td><td>0.94</td></tr>
+          <tr><td>O-01</td><td>Onboarding</td><td>28</td><td>22 days</td><td>1.27</td></tr>
+          <tr><td>O-02</td><td>Onboarding</td><td>28</td><td>27 days</td><td>1.04</td></tr>
+          <tr><td>O-03</td><td>Onboarding</td><td>28</td><td>30 days</td><td>0.93</td></tr>
+          <tr><td>O-04</td><td>Onboarding</td><td>28</td><td>19 days</td><td>1.47</td></tr>
+          <tr><td>O-05</td><td>Onboarding</td><td>28</td><td>28 days</td><td>1.00</td></tr>
+          <tr><td>O-06</td><td>Onboarding</td><td>28</td><td>35 days</td><td>0.80</td></tr>
+          <tr><td>O-07</td><td>Onboarding</td><td>28</td><td>24 days</td><td>1.17</td></tr>
+          <tr><td colspan="4" style="text-align:right;"><strong>Sum</strong></td><td><strong>11.15</strong></td></tr>
+        </tbody>
+      </table>
+      <div class="callout info">Monthly Performance Score = 11.15 ÷ 10 = <strong>1.115</strong> &nbsp;|&nbsp; Adjusted Score = 1.115 × 2.398 = <strong>2.674</strong></div>
+
+      <h3>Step 2 — Final Rankings</h3>
+      <table>
+        <thead><tr><th>Rank</th><th>Engineer</th><th>Monthly Perf. Score</th><th>log(Cases+1)</th><th>Adjusted Score</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>🥇 1</td><td>Eng-04</td><td>1.170</td><td>2.398</td><td>2.806</td><td><span class="badge good">✓ Above Target</span></td></tr>
+          <tr><td>🥈 2</td><td>Eng-01</td><td>1.156</td><td>2.398</td><td>2.772</td><td><span class="badge good">✓ Above Target</span></td></tr>
+          <tr><td>🥉 3</td><td>Eng-03</td><td>1.140</td><td>2.398</td><td>2.734</td><td><span class="badge good">✓ Above Target</span></td></tr>
+          <tr><td>4</td><td>Eng-02</td><td>1.119</td><td>2.398</td><td>2.683</td><td><span class="badge good">✓ Above Target</span></td></tr>
+          <tr><td>5</td><td>Eng-05</td><td>1.115</td><td>2.398</td><td>2.674</td><td><span class="badge good">✓ Above Target</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout good">All 5 engineers have a Monthly Performance Score above 1.0, meaning all are meeting or exceeding their case-type targets on average. Rankings differentiate the <em>degree</em> of excellence, not just pass/fail.</div>
+
+      <h3>Step 3 — Blended Target TTR Reference</h3>
+      <table>
+        <thead><tr><th>Engineer</th><th>Case Mix (S/G/O)</th><th>Blended Target TTR</th><th>Actual Blended TTR</th><th>Gap</th></tr></thead>
+        <tbody>
+          <tr><td>Eng-01</td><td>5/3/2</td><td>(5×7+3×17+2×28)÷10 = 12.2d</td><td>(30+42+53)÷10 = 12.5d</td><td>+0.3d</td></tr>
+          <tr><td>Eng-02</td><td>2/1/7</td><td>(2×7+1×17+7×28)÷10 = 21.7d</td><td>(15+13+182)÷10 = 21.0d</td><td>−0.7d</td></tr>
+          <tr><td>Eng-03</td><td>8/0/2</td><td>(8×7+0+2×28)÷10 = 11.2d</td><td>(51+0+59)÷10 = 11.0d</td><td>−0.2d</td></tr>
+          <tr><td>Eng-04</td><td>3/4/3</td><td>(3×7+4×17+3×28)÷10 = 17.3d</td><td>(18+60+75)÷10 = 15.3d</td><td>−2.0d</td></tr>
+          <tr><td>Eng-05</td><td>1/2/7</td><td>(1×7+2×17+7×28)÷10 = 23.9d</td><td>(5+33+185)÷10 = 22.3d</td><td>−1.6d</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info">A negative gap means the engineer resolved cases faster than their personalized target — a positive result. <strong>Eng-04 and Eng-05</strong> show the strongest performance against blended targets.</div>
+    </section>
+
+    <section class="card" id="summary">
+      <span class="step-marker">SECTION 10</span>
+      <h2>Summary for Leadership</h2>
+
+      <div class="summary-grid">
+        <div class="summary-box">
+          <h4>The Framework in 3 Steps</h4>
+          <ol>
+            <li>Normalize each case using <em>Target ÷ Actual TTR</em></li>
+            <li>Average all scores for the month</li>
+            <li>Multiply by <em>log(cases+1)</em> for volume weight</li>
+          </ol>
+        </div>
+        <div class="summary-box">
+          <h4>What Leaders Get</h4>
+          <ul>
+            <li>One comparable score per engineer</li>
+            <li>Rankings immune to case mix bias</li>
+            <li>Volume recognized but not dominant</li>
+            <li>Transparent, auditable calculation</li>
+          </ul>
+        </div>
+        <div class="summary-box">
+          <h4>Future-Proofing</h4>
+          <ul>
+            <li>Add new case types easily</li>
+            <li>Adjust targets without rebuilding the model</li>
+            <li>Works at any team size</li>
+            <li>Can feed into dashboards or Salesforce reports</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  TTR KPI Framework · Internal Use Only
+</footer>
+
+</body>
+</html>
