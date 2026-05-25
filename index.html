@@ -4,232 +4,568 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TTR KPI Framework for Multi-Role Support Engineers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --sf-blue: #0176d3;
-    --sf-blue-dark: #014486;
-    --sf-blue-light: #e8f4fd;
-    --bg: #f4f6f9;
-    --card: #ffffff;
-    --text: #16325c;
-    --muted: #54698d;
-    --border: #dddbda;
-    --good: #2e844a;
-    --bad: #ba0517;
-    --warn: #b06d00;
-    --good-bg: #e8f5ec;
-    --bad-bg: #fde7e9;
-    --warn-bg: #fef5e7;
+    --navy: #0B0E2E;
+    --navy-2: #14193F;
+    --indigo: #1E1B4B;
+    --violet: #4F46E5;
+    --purple: #7C3AED;
+    --magenta: #C026D3;
+    --pink: #EC4899;
+    --cyan: #06B6D4;
+    --teal: #14B8A6;
+
+    --bg: #07091F;
+    --surface: rgba(255, 255, 255, 0.04);
+    --surface-2: rgba(255, 255, 255, 0.06);
+    --border: rgba(255, 255, 255, 0.10);
+    --border-strong: rgba(255, 255, 255, 0.18);
+
+    --text: #F1F5F9;
+    --text-muted: #94A3B8;
+    --text-dim: #64748B;
+
+    --good: #34D399;
+    --bad: #F87171;
+    --warn: #FBBF24;
+
+    --grad-primary: linear-gradient(135deg, #4F46E5 0%, #7C3AED 35%, #C026D3 70%, #EC4899 100%);
+    --grad-soft: linear-gradient(135deg, rgba(79,70,229,0.15) 0%, rgba(124,58,237,0.15) 50%, rgba(236,72,153,0.15) 100%);
+    --grad-card: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
   }
+
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    font-family: "Salesforce Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.6;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(at 15% 10%, rgba(79,70,229,0.35) 0px, transparent 50%),
+      radial-gradient(at 85% 5%, rgba(192,38,211,0.30) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(124,58,237,0.20) 0px, transparent 60%),
+      radial-gradient(at 80% 90%, rgba(236,72,153,0.25) 0px, transparent 50%),
+      radial-gradient(at 10% 95%, rgba(6,182,212,0.20) 0px, transparent 50%);
+    z-index: -2;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+    z-index: -1;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+
   header.hero {
-    background: linear-gradient(135deg, var(--sf-blue-dark), var(--sf-blue));
-    color: #fff;
-    padding: 48px 24px;
+    position: relative;
+    padding: 80px 24px 100px;
     text-align: center;
+    overflow: hidden;
+  }
+  .hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 2; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    backdrop-filter: blur(10px);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+  .pill .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--grad-primary);
+    box-shadow: 0 0 12px rgba(192,38,211,0.6);
   }
   header.hero h1 {
-    margin: 0 0 8px 0;
-    font-size: 2rem;
-    font-weight: 700;
+    margin: 0 0 18px 0;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    background: linear-gradient(180deg, #ffffff 0%, #C7D2FE 60%, #A78BFA 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
-  header.hero p { margin: 0; opacity: 0.92; font-size: 1.05rem; }
+  header.hero p.subtitle {
+    margin: 0 auto;
+    max-width: 720px;
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .hero-sparkles { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+  .sparkle { position: absolute; animation: float 6s ease-in-out infinite; }
+  .sparkle.s1 { top: 18%; left: 12%; animation-delay: 0s; }
+  .sparkle.s2 { top: 28%; right: 14%; animation-delay: 1.5s; }
+  .sparkle.s3 { bottom: 22%; left: 20%; animation-delay: 3s; }
+  .sparkle.s4 { bottom: 30%; right: 22%; animation-delay: 4.5s; }
+  .sparkle.s5 { top: 50%; left: 8%; animation-delay: 2s; }
+  .sparkle.s6 { top: 60%; right: 8%; animation-delay: 3.5s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+    50% { transform: translateY(-12px) rotate(180deg); opacity: 1; }
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+  .stat-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    padding: 14px 20px;
+    border-radius: 12px;
+    min-width: 140px;
+  }
+  .stat-chip .num {
+    font-size: 1.6rem;
+    font-weight: 700;
+    background: var(--grad-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stat-chip .lbl {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+  }
+
+  .ai-disclaimer {
+    max-width: 1340px;
+    margin: 0 auto 24px;
+    padding: 12px 20px;
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    border-radius: 10px;
+    color: #FCD34D;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
   .layout {
     display: grid;
-    grid-template-columns: 260px 1fr;
-    max-width: 1400px;
+    grid-template-columns: 280px 1fr;
+    max-width: 1340px;
     margin: 0 auto;
-    gap: 24px;
-    padding: 24px;
+    gap: 28px;
+    padding: 0 24px 80px;
   }
   nav.toc {
     position: sticky;
-    top: 16px;
+    top: 24px;
     align-self: start;
-    background: var(--card);
+    background: var(--grad-card);
+    backdrop-filter: blur(20px);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    max-height: calc(100vh - 32px);
+    border-radius: 16px;
+    padding: 22px;
+    max-height: calc(100vh - 48px);
     overflow-y: auto;
   }
   nav.toc h3 {
-    margin: 0 0 12px 0;
-    font-size: 0.85rem;
+    margin: 0 0 16px 0;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--muted);
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    font-weight: 600;
   }
-  nav.toc ol { margin: 0; padding-left: 20px; }
-  nav.toc li { margin-bottom: 6px; }
+  nav.toc ol { margin: 0; padding: 0; list-style: none; counter-reset: toc; }
+  nav.toc li { counter-increment: toc; margin-bottom: 4px; }
   nav.toc a {
-    color: var(--text);
+    color: var(--text-muted);
     text-decoration: none;
-    font-size: 0.92rem;
-  }
-  nav.toc a:hover { color: var(--sf-blue); text-decoration: underline; }
-  main { min-width: 0; }
-  section.card {
-    background: var(--card);
-    border: 1px solid var(--border);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
     border-radius: 8px;
-    padding: 28px 32px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  nav.toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    background: var(--surface-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    min-width: 28px;
+    text-align: center;
+  }
+  nav.toc a:hover { color: var(--text); background: var(--surface-2); }
+  nav.toc a:hover::before { background: var(--grad-primary); color: #fff; }
+
+  main { min-width: 0; }
+
+  section.card {
+    position: relative;
+    background: var(--grad-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 40px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  section.card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
   }
   section.card h2 {
-    margin: 0 0 16px 0;
-    color: var(--sf-blue-dark);
-    font-size: 1.5rem;
-    border-bottom: 2px solid var(--sf-blue-light);
-    padding-bottom: 10px;
+    margin: 0 0 20px 0;
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    background: linear-gradient(135deg, #ffffff 0%, #E0E7FF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
   section.card h3 {
-    color: var(--sf-blue-dark);
-    margin-top: 24px;
-    margin-bottom: 8px;
-    font-size: 1.15rem;
+    color: var(--text);
+    margin-top: 28px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
   section.card h4 {
-    color: var(--text);
-    margin-top: 20px;
-    margin-bottom: 6px;
-    font-size: 1rem;
+    color: #C7D2FE;
+    margin-top: 22px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
   }
-  p { margin: 0 0 12px 0; }
-  ul, ol { margin: 0 0 12px 0; padding-left: 24px; }
-  li { margin-bottom: 6px; }
+  section.card p { margin: 0 0 12px 0; color: #CBD5E1; }
+  section.card ul, section.card ol { margin: 0 0 12px 0; padding-left: 22px; color: #CBD5E1; }
+  section.card li { margin-bottom: 6px; }
+  section.card strong { color: #fff; font-weight: 600; }
+  section.card em { color: #C7D2FE; font-style: normal; font-weight: 500; }
+
+  .step-marker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--grad-soft);
+    border: 1px solid rgba(124,58,237,0.4);
+    color: #DDD6FE;
+  }
+
+  .icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--grad-primary);
+    flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(124,58,237,0.3);
+  }
+  .icon-box svg { width: 22px; height: 22px; color: #fff; }
+
   table {
     width: 100%;
-    border-collapse: collapse;
-    margin: 16px 0;
-    font-size: 0.95rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 18px 0;
+    font-size: 0.92rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
   }
   th, td {
     text-align: left;
-    padding: 10px 12px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border);
+    color: #CBD5E1;
   }
-  th {
-    background: var(--sf-blue-light);
-    color: var(--sf-blue-dark);
+  thead th {
+    background: rgba(124,58,237,0.15);
+    color: #DDD6FE;
     font-weight: 600;
-    border-bottom: 2px solid var(--sf-blue);
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    border-bottom: 2px solid rgba(124,58,237,0.4);
   }
-  tr:hover td { background: #fafbfc; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: rgba(255,255,255,0.025); }
+
   .formula {
-    background: #f7f9fb;
-    border-left: 4px solid var(--sf-blue);
-    padding: 14px 18px;
-    margin: 14px 0;
-    font-family: "SF Mono", Menlo, Consolas, monospace;
+    background: linear-gradient(135deg, rgba(79,70,229,0.12) 0%, rgba(192,38,211,0.10) 100%);
+    border: 1px solid rgba(124,58,237,0.35);
+    padding: 18px 22px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', Menlo, Consolas, monospace;
     font-size: 0.95rem;
-    border-radius: 4px;
+    border-radius: 12px;
+    color: #E0E7FF;
+    position: relative;
     overflow-x: auto;
   }
+  .formula::before {
+    content: 'ƒ';
+    position: absolute;
+    top: 8px;
+    right: 14px;
+    font-family: 'Inter', serif;
+    font-style: italic;
+    font-size: 1.4rem;
+    color: rgba(192,38,211,0.5);
+    font-weight: 700;
+  }
+
   .callout {
     padding: 14px 18px;
-    border-radius: 6px;
-    margin: 14px 0;
-    border-left: 4px solid;
-  }
-  .callout.good { background: var(--good-bg); border-color: var(--good); }
-  .callout.bad { background: var(--bad-bg); border-color: var(--bad); }
-  .callout.warn { background: var(--warn-bg); border-color: var(--warn); }
-  .callout.info { background: var(--sf-blue-light); border-color: var(--sf-blue); }
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
     border-radius: 12px;
-    font-size: 0.8rem;
+    margin: 14px 0;
+    border: 1px solid;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .callout.good { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.3); color: #A7F3D0; }
+  .callout.bad { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.3); color: #FECACA; }
+  .callout.warn { background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.3); color: #FDE68A; }
+  .callout.info { background: rgba(124,58,237,0.10); border-color: rgba(124,58,237,0.3); color: #DDD6FE; }
+  .callout svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+  .callout strong { color: inherit; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
     font-weight: 600;
     margin-right: 4px;
+    border: 1px solid;
   }
-  .badge.good { background: var(--good-bg); color: var(--good); }
-  .badge.bad { background: var(--bad-bg); color: var(--bad); }
-  .badge.warn { background: var(--warn-bg); color: var(--warn); }
-  .badge.neutral { background: #eef1f6; color: var(--muted); }
-  .step-marker {
-    display: inline-block;
-    background: var(--sf-blue);
-    color: #fff;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    letter-spacing: 0.04em;
-  }
-  .takeaway-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 12px;
-    margin-top: 16px;
-  }
-  .takeaway {
-    background: var(--good-bg);
-    border-left: 4px solid var(--good);
-    padding: 12px 16px;
-    border-radius: 4px;
-  }
-  .takeaway strong { color: var(--good); }
-  .summary-grid {
+  .badge.good { background: rgba(52,211,153,0.12); color: var(--good); border-color: rgba(52,211,153,0.3); }
+  .badge.bad { background: rgba(248,113,113,0.12); color: var(--bad); border-color: rgba(248,113,113,0.3); }
+  .badge.warn { background: rgba(251,191,36,0.12); color: var(--warn); border-color: rgba(251,191,36,0.3); }
+  .badge.neutral { background: var(--surface-2); color: var(--text-muted); border-color: var(--border); }
+
+  .targets-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 18px 0;
+  }
+  .target-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .target-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent, var(--grad-primary));
+  }
+  .target-card.support { --accent: linear-gradient(90deg, #06B6D4, #4F46E5); }
+  .target-card.guide { --accent: linear-gradient(90deg, #7C3AED, #C026D3); }
+  .target-card.onboarding { --accent: linear-gradient(90deg, #EC4899, #F472B6); }
+  .target-card .role {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+  .target-card .days {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: var(--accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 6px 0 0 0;
+    line-height: 1;
+  }
+  .target-card .unit { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+  .takeaway-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .takeaway {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    border-radius: 14px;
+    position: relative;
+  }
+  .takeaway-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--grad-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  .takeaway-icon svg { width: 18px; height: 18px; color: #fff; }
+  .takeaway h4 { margin: 0 0 6px 0; color: #fff; font-size: 1rem; }
+  .takeaway p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 16px;
-    margin-top: 16px;
+    margin-top: 18px;
   }
   .summary-box {
-    background: var(--sf-blue-light);
-    padding: 16px;
-    border-radius: 6px;
+    background: var(--grad-soft);
+    border: 1px solid rgba(124,58,237,0.3);
+    padding: 22px;
+    border-radius: 16px;
   }
-  .summary-box h4 { margin-top: 0; color: var(--sf-blue-dark); }
-  .ai-disclaimer {
-    background: #fef5e7;
-    border: 1px solid #f4c25c;
-    color: #5a4400;
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 0.88rem;
-    margin: 16px auto;
-    max-width: 1340px;
+  .summary-box h4 {
+    margin-top: 0;
+    color: #fff;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
+
+  .log-chart {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    margin: 18px 0;
+  }
+  .log-chart svg { width: 100%; height: auto; max-height: 280px; }
+
+  .rank-1 td:first-child, .rank-2 td:first-child, .rank-3 td:first-child { font-weight: 700; }
+  .rank-1 td { background: rgba(251,191,36,0.06) !important; }
+  .rank-2 td { background: rgba(196,196,196,0.04) !important; }
+  .rank-3 td { background: rgba(217,119,6,0.06) !important; }
+
   footer {
     text-align: center;
-    padding: 24px;
-    color: var(--muted);
+    padding: 40px 24px 60px;
+    color: var(--text-dim);
     font-size: 0.85rem;
   }
+  footer .brand {
+    background: var(--grad-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+  }
+
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
     nav.toc { position: static; max-height: none; }
-    section.card { padding: 20px; }
+    section.card { padding: 24px 22px; }
+    header.hero { padding: 56px 20px 70px; }
   }
   @media print {
-    nav.toc, header.hero { display: none; }
-    section.card { box-shadow: none; page-break-inside: avoid; border: 1px solid #ccc; }
-    body { background: #fff; }
+    nav.toc, header.hero, .hero-sparkles { display: none; }
+    body { background: #fff; color: #000; }
+    section.card { background: #fff; border: 1px solid #ddd; color: #000; }
   }
 </style>
 </head>
 <body>
 
 <header class="hero">
-  <h1>TTR KPI Framework for Multi-Role Support Engineers</h1>
-  <p>A Fair &amp; Scalable Approach to Measuring Engineer Performance Across Mixed Case Types</p>
+  <div class="hero-sparkles">
+    <svg class="sparkle s1" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 0L13.5 9 22.5 12 13.5 13.5 12 24 10.5 13.5 1.5 12 10.5 9z" fill="url(#g1)"/><defs><linearGradient id="g1" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#A78BFA"/><stop offset="1" stop-color="#EC4899"/></linearGradient></defs></svg>
+    <svg class="sparkle s2" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 0L13.5 9 22.5 12 13.5 13.5 12 24 10.5 13.5 1.5 12 10.5 9z" fill="#06B6D4"/></svg>
+    <svg class="sparkle s3" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 0L13.5 9 22.5 12 13.5 13.5 12 24 10.5 13.5 1.5 12 10.5 9z" fill="url(#g3)"/><defs><linearGradient id="g3" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#F472B6"/><stop offset="1" stop-color="#7C3AED"/></linearGradient></defs></svg>
+    <svg class="sparkle s4" width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 0L13.5 9 22.5 12 13.5 13.5 12 24 10.5 13.5 1.5 12 10.5 9z" fill="#A78BFA"/></svg>
+    <svg class="sparkle s5" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 0L13.5 9 22.5 12 13.5 13.5 12 24 10.5 13.5 1.5 12 10.5 9z" fill="#EC4899"/></svg>
+    <svg class="sparkle s6" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 0L13.5 9 22.5 12 13.5 13.5 12 24 10.5 13.5 1.5 12 10.5 9z" fill="url(#g6)"/><defs><linearGradient id="g6" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#4F46E5"/><stop offset="1" stop-color="#C026D3"/></linearGradient></defs></svg>
+  </div>
+
+  <div class="hero-inner">
+    <div class="pill">
+      <span class="dot"></span>
+      Performance Analytics · Powered by Data
+    </div>
+    <h1>TTR KPI Framework for Multi-Role Support Engineers</h1>
+    <p class="subtitle">A fair, transparent, and scalable approach to measuring engineer performance across mixed case types — Support, Success Guide, and Onboarding Specialist.</p>
+
+    <div class="hero-stats">
+      <div class="stat-chip"><div class="num">3</div><div class="lbl">Case Types</div></div>
+      <div class="stat-chip"><div class="num">1</div><div class="lbl">Unified Score</div></div>
+      <div class="stat-chip"><div class="num">∞</div><div class="lbl">Scalable</div></div>
+    </div>
+  </div>
 </header>
 
 <div class="ai-disclaimer">
-  <strong>Note:</strong> This content was generated using AI. Review for accuracy and safety before using.
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  This content was generated using AI. Review for accuracy and safety before using.
 </div>
 
 <div class="layout">
@@ -253,26 +589,29 @@
   <main>
 
     <section class="card" id="context">
-      <span class="step-marker">SECTION 1</span>
-      <h2>The Business Context</h2>
+      <span class="step-marker">◆ Section 1</span>
+      <h2>
+        <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
+        The Business Context
+      </h2>
       <p>As we scale our support organization, engineers are increasingly expected to handle multiple case types — <strong>Support</strong>, <strong>Success Guide</strong>, and <strong>Onboarding Specialist</strong> cases — each with different complexity levels and resolution time expectations.</p>
       <p>This creates a critical challenge: <em>how do we fairly measure and rank engineer performance when their case mix varies month to month?</em></p>
     </section>
 
     <section class="card" id="problem">
-      <span class="step-marker">SECTION 2 · STEP 1 OF 3</span>
-      <h2>The Problem with Raw TTR</h2>
+      <span class="step-marker">◆ Section 2 · Step 1 of 3</span>
+      <h2>
+        <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+        The Problem with Raw TTR
+      </h2>
       <p>A simple average TTR (Time to Resolve) is misleading when engineers handle cases with different KPI targets. Comparing raw numbers across case types is like comparing apples to oranges.</p>
 
       <h3>Defined KPI Targets by Case Type</h3>
-      <table>
-        <thead><tr><th>Case Type</th><th>TTR Target</th></tr></thead>
-        <tbody>
-          <tr><td>Support Engineer</td><td>7 Days</td></tr>
-          <tr><td>Success Guide</td><td>17 Days</td></tr>
-          <tr><td>Onboarding Specialist</td><td>28 Days</td></tr>
-        </tbody>
-      </table>
+      <div class="targets-grid">
+        <div class="target-card support"><div class="role">Support Engineer</div><div class="days">7</div><div class="unit">Days TTR Target</div></div>
+        <div class="target-card guide"><div class="role">Success Guide</div><div class="days">17</div><div class="unit">Days TTR Target</div></div>
+        <div class="target-card onboarding"><div class="role">Onboarding Specialist</div><div class="days">28</div><div class="unit">Days TTR Target</div></div>
+      </div>
 
       <h3>Example — Why Raw TTR Fails</h3>
       <ul>
@@ -280,13 +619,17 @@
         <li><strong>Engineer B</strong> closes 10 Onboarding cases averaging 25 days each → raw TTR = 25 days <span class="badge bad">Looks bad</span></li>
       </ul>
       <div class="callout info">
-        At face value, Engineer A looks far superior. But Engineer B is actually beating their target while Engineer A is also meeting theirs. <strong>Both are performing well — raw TTR hides this completely.</strong>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <div>At face value, Engineer A looks far superior. But Engineer B is actually beating their target while Engineer A is also meeting theirs. <strong>Both are performing well — raw TTR hides this completely.</strong></div>
       </div>
     </section>
 
     <section class="card" id="solution">
-      <span class="step-marker">SECTION 3 · STEP 2 OF 3</span>
-      <h2>The Solution — Normalized TTR Performance Score</h2>
+      <span class="step-marker">◆ Section 3 · Step 2 of 3</span>
+      <h2>
+        <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+        The Solution — Normalized TTR Performance Score
+      </h2>
       <p>Instead of comparing raw TTR, we convert each case into a <strong>TTR Performance Score</strong> that measures how well the engineer performed against the target for that specific case type.</p>
 
       <h3>Formula</h3>
@@ -295,9 +638,9 @@
       <table>
         <thead><tr><th>Score</th><th>Meaning</th></tr></thead>
         <tbody>
-          <tr><td>&gt; 1.0</td><td><span class="badge good">✓</span> Beat the target</td></tr>
-          <tr><td>= 1.0</td><td><span class="badge neutral">→</span> Exactly met the target</td></tr>
-          <tr><td>&lt; 1.0</td><td><span class="badge bad">✗</span> Missed the target</td></tr>
+          <tr><td>&gt; 1.0</td><td><span class="badge good">Beat the target</span></td></tr>
+          <tr><td>= 1.0</td><td><span class="badge neutral">Exactly met the target</span></td></tr>
+          <tr><td>&lt; 1.0</td><td><span class="badge bad">Missed the target</span></td></tr>
         </tbody>
       </table>
 
@@ -314,8 +657,11 @@
     </section>
 
     <section class="card" id="monthly">
-      <span class="step-marker">SECTION 4 · STEP 3 OF 3</span>
-      <h2>Monthly Performance Score</h2>
+      <span class="step-marker">◆ Section 4 · Step 3 of 3</span>
+      <h2>
+        <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        Monthly Performance Score
+      </h2>
       <p>For an engineer who handles <strong>X</strong> Support, <strong>Y</strong> Guide, and <strong>Z</strong> Onboarding cases in a month:</p>
       <div class="formula">Monthly Score = Sum of all TTR Performance Scores ÷ Total Cases (X + Y + Z)</div>
 
@@ -327,8 +673,11 @@
     </section>
 
     <section class="card" id="log">
-      <span class="step-marker">SECTION 5</span>
-      <h2>Volume Weighting — Why Logarithmic?</h2>
+      <span class="step-marker">◆ Section 5</span>
+      <h2>
+        <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+        Volume Weighting — Why Logarithmic?
+      </h2>
 
       <h3>The Problem Without Volume Weighting</h3>
       <p>Without accounting for volume, a low-volume engineer who closes just 2 easy cases perfectly could rank #1 over a high-volume engineer who closed 40 cases at 95% efficiency. That's unfair and misleading for leadership.</p>
@@ -338,6 +687,52 @@
 
       <h3>The Logarithmic Advantage</h3>
       <p>The logarithm grows fast initially (rewarding meaningful volume) but flattens out at higher volumes (preventing volume from dominating the score unfairly).</p>
+
+      <div class="log-chart">
+        <svg viewBox="0 0 600 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="logGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4F46E5"/>
+              <stop offset="50%" stop-color="#7C3AED"/>
+              <stop offset="100%" stop-color="#EC4899"/>
+            </linearGradient>
+            <linearGradient id="logFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <g stroke="rgba(255,255,255,0.06)" stroke-width="1">
+            <line x1="60" y1="40" x2="580" y2="40"/>
+            <line x1="60" y1="100" x2="580" y2="100"/>
+            <line x1="60" y1="160" x2="580" y2="160"/>
+            <line x1="60" y1="220" x2="580" y2="220"/>
+          </g>
+          <line x1="60" y1="20" x2="60" y2="220" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+          <line x1="60" y1="220" x2="580" y2="220" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+          <text x="50" y="225" text-anchor="end" fill="#94A3B8" font-size="11" font-family="JetBrains Mono">0</text>
+          <text x="50" y="165" text-anchor="end" fill="#94A3B8" font-size="11" font-family="JetBrains Mono">1</text>
+          <text x="50" y="105" text-anchor="end" fill="#94A3B8" font-size="11" font-family="JetBrains Mono">2</text>
+          <text x="50" y="45" text-anchor="end" fill="#94A3B8" font-size="11" font-family="JetBrains Mono">4</text>
+          <text x="38" y="125" fill="#64748B" font-size="11" font-family="Inter" transform="rotate(-90 38 125)">log(n+1)</text>
+          <text x="92" y="240" text-anchor="middle" fill="#94A3B8" font-size="11" font-family="JetBrains Mono">1</text>
+          <text x="174" y="240" text-anchor="middle" fill="#94A3B8" font-size="11" font-family="JetBrains Mono">5</text>
+          <text x="278" y="240" text-anchor="middle" fill="#94A3B8" font-size="11" font-family="JetBrains Mono">15</text>
+          <text x="404" y="240" text-anchor="middle" fill="#94A3B8" font-size="11" font-family="JetBrains Mono">30</text>
+          <text x="528" y="240" text-anchor="middle" fill="#94A3B8" font-size="11" font-family="JetBrains Mono">50</text>
+          <text x="320" y="256" text-anchor="middle" fill="#64748B" font-size="11" font-family="Inter">Total Cases (n)</text>
+          <path d="M 92,179 C 130,135 170,115 220,95 C 280,80 360,68 440,60 C 500,55 540,52 580,50 L 580,220 L 92,220 Z" fill="url(#logFill)"/>
+          <path d="M 92,179 C 130,135 170,115 220,95 C 280,80 360,68 440,60 C 500,55 540,52 580,50" stroke="url(#logGrad)" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="92" cy="179" r="5" fill="#4F46E5" stroke="#fff" stroke-width="2"/>
+          <circle cx="174" cy="113" r="5" fill="#7C3AED" stroke="#fff" stroke-width="2"/>
+          <circle cx="278" cy="80" r="5" fill="#A855F7" stroke="#fff" stroke-width="2"/>
+          <circle cx="404" cy="60" r="5" fill="#C026D3" stroke="#fff" stroke-width="2"/>
+          <circle cx="528" cy="53" r="5" fill="#EC4899" stroke="#fff" stroke-width="2"/>
+          <text x="174" y="100" text-anchor="middle" fill="#A78BFA" font-size="11" font-family="JetBrains Mono" font-weight="600">1.79</text>
+          <text x="278" y="68" text-anchor="middle" fill="#C084FC" font-size="11" font-family="JetBrains Mono" font-weight="600">2.77</text>
+          <text x="404" y="48" text-anchor="middle" fill="#E879F9" font-size="11" font-family="JetBrains Mono" font-weight="600">3.43</text>
+          <text x="528" y="40" text-anchor="middle" fill="#F472B6" font-size="11" font-family="JetBrains Mono" font-weight="600">3.93</text>
+        </svg>
+      </div>
 
       <table>
         <thead><tr><th>Total Cases</th><th>log(n+1)</th><th>Effect</th></tr></thead>
@@ -358,46 +753,58 @@
       <table>
         <thead><tr><th>Scenario</th><th>Recommendation</th></tr></thead>
         <tbody>
-          <tr><td>All engineers handle roughly equal case volumes each month</td><td><span class="badge good">✓</span> Skip log — Monthly Performance Score alone is sufficient. Same log multiplier cancels out.</td></tr>
-          <tr><td>Case volumes vary significantly across engineers (real-world norm)</td><td><span class="badge good">✓</span> Use log — Prevents low-volume outliers from topping the chart on a few lucky cases.</td></tr>
-          <tr><td>A new team just starting out with low case counts</td><td><span class="badge warn">⚠</span> Use log cautiously — Low volumes amplify randomness. Consider a minimum case threshold (e.g., 5+ cases) before ranking.</td></tr>
-          <tr><td>You want the simplest model for quick reporting</td><td><span class="badge good">✓</span> Skip log — Monthly Performance Score is intuitive and still fair if volumes are balanced.</td></tr>
+          <tr><td>All engineers handle roughly equal case volumes each month</td><td><span class="badge good">Skip log</span> Monthly Performance Score alone is sufficient. Same multiplier cancels out.</td></tr>
+          <tr><td>Case volumes vary significantly across engineers (real-world norm)</td><td><span class="badge good">Use log</span> Prevents low-volume outliers from topping the chart on a few lucky cases.</td></tr>
+          <tr><td>A new team just starting out with low case counts</td><td><span class="badge warn">Use cautiously</span> Low volumes amplify randomness. Consider a minimum 5+ cases threshold.</td></tr>
+          <tr><td>You want the simplest model for quick reporting</td><td><span class="badge good">Skip log</span> Monthly Performance Score is intuitive and still fair if volumes are balanced.</td></tr>
         </tbody>
       </table>
       <div class="callout info">
-        <strong>Rule of thumb:</strong> If the gap between your highest-volume and lowest-volume engineer in a month is less than 2× (e.g., 8 vs. 15 cases), log makes negligible difference. If the gap is 3× or more (e.g., 3 vs. 20 cases), log materially protects ranking fairness.
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <div><strong>Rule of thumb:</strong> If the gap between your highest- and lowest-volume engineer is less than 2× (e.g., 8 vs. 15 cases), log makes negligible difference. If the gap is 3× or more (e.g., 3 vs. 20 cases), log materially protects ranking fairness.</div>
       </div>
 
       <h3>Proof — When Log Actually Changes Rankings</h3>
       <p>Here's a concrete example with unequal volumes to show log in action:</p>
       <table>
-        <thead><tr><th>Engineer</th><th>Total Cases</th><th>Monthly Perf. Score</th><th>log(Cases+1)</th><th>Adjusted Score</th><th>Rank (with log)</th><th>Rank (without log)</th></tr></thead>
+        <thead><tr><th>Engineer</th><th>Total Cases</th><th>Monthly Score</th><th>log(Cases+1)</th><th>Adjusted Score</th><th>With Log</th><th>Without Log</th></tr></thead>
         <tbody>
-          <tr><td>Eng-A</td><td>3</td><td>1.45</td><td>log(4) = 1.386</td><td>2.010</td><td>🥈 2nd</td><td>🥇 1st</td></tr>
-          <tr><td>Eng-B</td><td>25</td><td>1.28</td><td>log(26) = 3.258</td><td>4.170</td><td>🥇 1st</td><td>🥈 2nd</td></tr>
+          <tr><td>Eng-A</td><td>3</td><td>1.45</td><td>1.386</td><td>2.010</td><td>🥈 2nd</td><td>🥇 1st</td></tr>
+          <tr><td>Eng-B</td><td>25</td><td>1.28</td><td>3.258</td><td>4.170</td><td>🥇 1st</td><td>🥈 2nd</td></tr>
         </tbody>
       </table>
-      <div class="callout bad"><strong>Without log:</strong> Eng-A ranks #1 because 1.45 &gt; 1.28 — but Eng-A only closed 3 cases.</div>
-      <div class="callout good"><strong>With log:</strong> Eng-B ranks #1 because sustained performance across 25 cases is genuinely more valuable than 3 lucky resolutions.</div>
-      <p>This is exactly the scenario log is designed to protect against. Eng-A may have received 3 easy cases by chance. Eng-B consistently outperformed targets at scale — and the logarithmic adjustment correctly promotes them.</p>
+      <div class="callout bad">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div><strong>Without log:</strong> Eng-A ranks #1 because 1.45 &gt; 1.28 — but Eng-A only closed 3 cases.</div>
+      </div>
+      <div class="callout good">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <div><strong>With log:</strong> Eng-B ranks #1 because sustained performance across 25 cases is genuinely more valuable than 3 lucky resolutions.</div>
+      </div>
       <p>The logarithmic approach balances two competing goals: <strong>rewarding engineers who carry high volume</strong> AND <strong>ensuring that raw volume cannot mask poor performance quality</strong>.</p>
     </section>
 
     <section class="card" id="blended">
-      <span class="step-marker">SECTION 6</span>
-      <h2>Blended Target TTR — For Stakeholder Reporting</h2>
+      <span class="step-marker">◆ Section 6</span>
+      <h2>
+        <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+        Blended Target TTR — For Stakeholder Reporting
+      </h2>
       <p>If stakeholders need to see a single TTR number (not a score), we can back-calculate a personalized blended target for each engineer based on their actual case mix:</p>
       <div class="formula">Blended Target TTR = (X × 7 + Y × 17 + Z × 28) ÷ (X + Y + Z)</div>
       <p>Then compare the engineer's actual blended TTR against this personalized target. The gap tells the story:</p>
       <ul>
-        <li><span class="badge good">✓</span> <strong>Negative gap</strong> (actual &lt; target) → Engineer is ahead of target</li>
-        <li><span class="badge bad">✗</span> <strong>Positive gap</strong> (actual &gt; target) → Engineer is behind target</li>
+        <li><span class="badge good">Negative gap</span> (actual &lt; target) → Engineer is ahead of target</li>
+        <li><span class="badge bad">Positive gap</span> (actual &gt; target) → Engineer is behind target</li>
       </ul>
     </section>
 
     <section class="card" id="ranking">
-      <span class="step-marker">SECTION 7</span>
-      <h2>Ranking the Team of 10</h2>
+      <span class="step-marker">◆ Section 7</span>
+      <h2>
+        <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></span>
+        Ranking the Team
+      </h2>
       <p>At month end, every engineer has a single Adjusted Monthly Score. <strong>Higher = better.</strong></p>
       <h3>Step-by-Step Ranking Process</h3>
       <ol>
@@ -410,21 +817,47 @@
     </section>
 
     <section class="card" id="takeaways">
-      <span class="step-marker">SECTION 8</span>
-      <h2>Key Takeaways for Leadership</h2>
+      <span class="step-marker">◆ Section 8</span>
+      <h2>
+        <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+        Key Takeaways for Leadership
+      </h2>
       <p>This framework is fair, transparent, and scalable. It rewards engineers who consistently beat their case-type targets, accounts for volume without being dominated by it, and produces a single comparable score regardless of case mix.</p>
       <div class="takeaway-grid">
-        <div class="takeaway"><strong>✓ Fair</strong><br>No engineer is penalized for receiving harder, longer case types.</div>
-        <div class="takeaway"><strong>✓ Transparent</strong><br>Every score traces back to individual case performance.</div>
-        <div class="takeaway"><strong>✓ Scalable</strong><br>Works whether the team has 10 or 100 engineers.</div>
-        <div class="takeaway"><strong>✓ Flexible</strong><br>New case types can be added by simply defining a new TTR target.</div>
-        <div class="takeaway"><strong>✓ Actionable</strong><br>Engineers with scores below 1.0 can be coached on specific case types.</div>
+        <div class="takeaway">
+          <div class="takeaway-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></div>
+          <h4>Fair</h4>
+          <p>No engineer is penalized for receiving harder, longer case types.</p>
+        </div>
+        <div class="takeaway">
+          <div class="takeaway-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+          <h4>Transparent</h4>
+          <p>Every score traces back to individual case performance.</p>
+        </div>
+        <div class="takeaway">
+          <div class="takeaway-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <h4>Scalable</h4>
+          <p>Works whether the team has 10 or 100 engineers.</p>
+        </div>
+        <div class="takeaway">
+          <div class="takeaway-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+          <h4>Flexible</h4>
+          <p>New case types can be added by simply defining a new TTR target.</p>
+        </div>
+        <div class="takeaway">
+          <div class="takeaway-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          <h4>Actionable</h4>
+          <p>Engineers with scores below 1.0 can be coached on specific case types.</p>
+        </div>
       </div>
     </section>
 
     <section class="card" id="sample">
-      <span class="step-marker">SECTION 9</span>
-      <h2>Sample Tracking Sheet</h2>
+      <span class="step-marker">◆ Section 9</span>
+      <h2>
+        <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>
+        Sample Tracking Sheet
+      </h2>
       <p>Sample calculations below with 5 engineers and their actual monthly case data.</p>
 
       <h3>Engineer Monthly Case Data</h3>
@@ -458,7 +891,7 @@
           <tr><td colspan="4" style="text-align:right;"><strong>Sum</strong></td><td><strong>11.56</strong></td></tr>
         </tbody>
       </table>
-      <div class="callout info">Monthly Performance Score = 11.56 ÷ 10 = <strong>1.156</strong> &nbsp;|&nbsp; Adjusted Score = 1.156 × log(11) = 1.156 × 2.398 = <strong>2.772</strong></div>
+      <div class="callout info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div>Monthly Performance Score = 11.56 ÷ 10 = <strong>1.156</strong> &nbsp;|&nbsp; Adjusted Score = 1.156 × log(11) = 1.156 × 2.398 = <strong>2.772</strong></div></div>
 
       <h4>Eng-02 (2 Support, 1 Guide, 7 Onboarding)</h4>
       <table>
@@ -477,7 +910,7 @@
           <tr><td colspan="4" style="text-align:right;"><strong>Sum</strong></td><td><strong>11.19</strong></td></tr>
         </tbody>
       </table>
-      <div class="callout info">Monthly Performance Score = 11.19 ÷ 10 = <strong>1.119</strong> &nbsp;|&nbsp; Adjusted Score = 1.119 × 2.398 = <strong>2.683</strong></div>
+      <div class="callout info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div>Monthly Performance Score = 11.19 ÷ 10 = <strong>1.119</strong> &nbsp;|&nbsp; Adjusted Score = 1.119 × 2.398 = <strong>2.683</strong></div></div>
 
       <h4>Eng-03 (8 Support, 0 Guide, 2 Onboarding)</h4>
       <table>
@@ -496,7 +929,7 @@
           <tr><td colspan="4" style="text-align:right;"><strong>Sum</strong></td><td><strong>11.40</strong></td></tr>
         </tbody>
       </table>
-      <div class="callout info">Monthly Performance Score = 11.40 ÷ 10 = <strong>1.140</strong> &nbsp;|&nbsp; Adjusted Score = 1.140 × 2.398 = <strong>2.734</strong></div>
+      <div class="callout info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div>Monthly Performance Score = 11.40 ÷ 10 = <strong>1.140</strong> &nbsp;|&nbsp; Adjusted Score = 1.140 × 2.398 = <strong>2.734</strong></div></div>
 
       <h4>Eng-04 (3 Support, 4 Guide, 3 Onboarding)</h4>
       <table>
@@ -515,7 +948,7 @@
           <tr><td colspan="4" style="text-align:right;"><strong>Sum</strong></td><td><strong>11.70</strong></td></tr>
         </tbody>
       </table>
-      <div class="callout info">Monthly Performance Score = 11.70 ÷ 10 = <strong>1.170</strong> &nbsp;|&nbsp; Adjusted Score = 1.170 × 2.398 = <strong>2.806</strong></div>
+      <div class="callout info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div>Monthly Performance Score = 11.70 ÷ 10 = <strong>1.170</strong> &nbsp;|&nbsp; Adjusted Score = 1.170 × 2.398 = <strong>2.806</strong></div></div>
 
       <h4>Eng-05 (1 Support, 2 Guide, 7 Onboarding)</h4>
       <table>
@@ -534,20 +967,20 @@
           <tr><td colspan="4" style="text-align:right;"><strong>Sum</strong></td><td><strong>11.15</strong></td></tr>
         </tbody>
       </table>
-      <div class="callout info">Monthly Performance Score = 11.15 ÷ 10 = <strong>1.115</strong> &nbsp;|&nbsp; Adjusted Score = 1.115 × 2.398 = <strong>2.674</strong></div>
+      <div class="callout info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div>Monthly Performance Score = 11.15 ÷ 10 = <strong>1.115</strong> &nbsp;|&nbsp; Adjusted Score = 1.115 × 2.398 = <strong>2.674</strong></div></div>
 
       <h3>Step 2 — Final Rankings</h3>
       <table>
-        <thead><tr><th>Rank</th><th>Engineer</th><th>Monthly Perf. Score</th><th>log(Cases+1)</th><th>Adjusted Score</th><th>Status</th></tr></thead>
+        <thead><tr><th>Rank</th><th>Engineer</th><th>Monthly Score</th><th>log(Cases+1)</th><th>Adjusted Score</th><th>Status</th></tr></thead>
         <tbody>
-          <tr><td>🥇 1</td><td>Eng-04</td><td>1.170</td><td>2.398</td><td>2.806</td><td><span class="badge good">✓ Above Target</span></td></tr>
-          <tr><td>🥈 2</td><td>Eng-01</td><td>1.156</td><td>2.398</td><td>2.772</td><td><span class="badge good">✓ Above Target</span></td></tr>
-          <tr><td>🥉 3</td><td>Eng-03</td><td>1.140</td><td>2.398</td><td>2.734</td><td><span class="badge good">✓ Above Target</span></td></tr>
-          <tr><td>4</td><td>Eng-02</td><td>1.119</td><td>2.398</td><td>2.683</td><td><span class="badge good">✓ Above Target</span></td></tr>
-          <tr><td>5</td><td>Eng-05</td><td>1.115</td><td>2.398</td><td>2.674</td><td><span class="badge good">✓ Above Target</span></td></tr>
+          <tr class="rank-1"><td>🥇 1</td><td>Eng-04</td><td>1.170</td><td>2.398</td><td>2.806</td><td><span class="badge good">Above Target</span></td></tr>
+          <tr class="rank-2"><td>🥈 2</td><td>Eng-01</td><td>1.156</td><td>2.398</td><td>2.772</td><td><span class="badge good">Above Target</span></td></tr>
+          <tr class="rank-3"><td>🥉 3</td><td>Eng-03</td><td>1.140</td><td>2.398</td><td>2.734</td><td><span class="badge good">Above Target</span></td></tr>
+          <tr><td>4</td><td>Eng-02</td><td>1.119</td><td>2.398</td><td>2.683</td><td><span class="badge good">Above Target</span></td></tr>
+          <tr><td>5</td><td>Eng-05</td><td>1.115</td><td>2.398</td><td>2.674</td><td><span class="badge good">Above Target</span></td></tr>
         </tbody>
       </table>
-      <div class="callout good">All 5 engineers have a Monthly Performance Score above 1.0, meaning all are meeting or exceeding their case-type targets on average. Rankings differentiate the <em>degree</em> of excellence, not just pass/fail.</div>
+      <div class="callout good"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><div>All 5 engineers have a Monthly Performance Score above 1.0, meaning all are meeting or exceeding their case-type targets on average. Rankings differentiate the <em>degree</em> of excellence, not just pass/fail.</div></div>
 
       <h3>Step 3 — Blended Target TTR Reference</h3>
       <table>
@@ -560,16 +993,22 @@
           <tr><td>Eng-05</td><td>1/2/7</td><td>(1×7+2×17+7×28)÷10 = 23.9d</td><td>(5+33+185)÷10 = 22.3d</td><td>−1.6d</td></tr>
         </tbody>
       </table>
-      <div class="callout info">A negative gap means the engineer resolved cases faster than their personalized target — a positive result. <strong>Eng-04 and Eng-05</strong> show the strongest performance against blended targets.</div>
+      <div class="callout info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div>A negative gap means the engineer resolved cases faster than their personalized target. <strong>Eng-04 and Eng-05</strong> show the strongest performance against blended targets.</div></div>
     </section>
 
     <section class="card" id="summary">
-      <span class="step-marker">SECTION 10</span>
-      <h2>Summary for Leadership</h2>
+      <span class="step-marker">◆ Section 10</span>
+      <h2>
+        <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+        Summary for Leadership
+      </h2>
 
       <div class="summary-grid">
         <div class="summary-box">
-          <h4>The Framework in 3 Steps</h4>
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            The Framework in 3 Steps
+          </h4>
           <ol>
             <li>Normalize each case using <em>Target ÷ Actual TTR</em></li>
             <li>Average all scores for the month</li>
@@ -577,7 +1016,10 @@
           </ol>
         </div>
         <div class="summary-box">
-          <h4>What Leaders Get</h4>
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            What Leaders Get
+          </h4>
           <ul>
             <li>One comparable score per engineer</li>
             <li>Rankings immune to case mix bias</li>
@@ -586,7 +1028,10 @@
           </ul>
         </div>
         <div class="summary-box">
-          <h4>Future-Proofing</h4>
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Future-Proofing
+          </h4>
           <ul>
             <li>Add new case types easily</li>
             <li>Adjust targets without rebuilding the model</li>
@@ -601,7 +1046,7 @@
 </div>
 
 <footer>
-  TTR KPI Framework · Internal Use Only
+  <span class="brand">TTR KPI Framework</span> · Built for fair, scalable performance measurement
 </footer>
 
 </body>
